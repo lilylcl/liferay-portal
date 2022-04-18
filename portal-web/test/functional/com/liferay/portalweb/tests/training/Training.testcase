@@ -1,0 +1,37 @@
+@component-name = "login-training"
+definition {
+
+	setUp {
+		TestCase.setUpPortalInstance();
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "Login Training"
+	@priority = "5"
+	test Login {
+		property portal.acceptance = "training";
+		property testray.main.component.name = "Login";
+
+		Click(locator1 = "UserBar#USER_SIGN_IN");
+
+		Type.typePause(
+			locator1 = "TextInput#EMAIL_ADDRESS",
+			value1 = "test@liferay.com");
+
+		Type.typePause(
+			locator1 = "TextInput#PASSWORD",
+			value1 = "test");
+
+		Click(locator1 = "Button#SIGN_IN");
+
+		AssertElementPresent(locator1 = "UserBar#USER_AVATAR_BUTTON");
+	}
+
+}
