@@ -1,0 +1,143 @@
+@component-name = "portal-headless"
+definition {
+
+	property custom.properties = "feature.flag.LPS-178642=true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Object";
+	property testray.main.component.name = "Headless Builder";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+	}
+
+	tearDown {
+		ApplicationAPI.deleteAllAPIApplication();
+
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@priority = 5
+	test CanCreateEndpointWithCompanyScope {
+		property portal.acceptance = "true";
+
+		task ("Given the API Application is created") {
+			APIBuilderUI.createAPIApplication(
+				addByPlus = "true",
+				title = "test1");
+		}
+
+		task ("And Given adding new endpoint with Company scope") {
+			APIBuilderUI.switchToRelatedEntryInEditApplication(
+				entity = "Endpoints",
+				title = "test1");
+
+			APIBuilderUI.createAPIEndpointInEditAPIApplicationPage(
+				path = "testendpoint1",
+				scopeName = "Company",
+				title = "test1");
+		}
+
+		task ("Then the endpoint with Company scope is created successfully and listed") {
+			Alert.viewSuccessMessage();
+
+			APIBuilderUI.viewEndpointInfo(
+				linkName = "GET /testendpoint1",
+				method = "GET",
+				path = "testendpoint1",
+				scope = "Company",
+				tab = "Info");
+
+			Click(
+				key_linkName = "Endpoints",
+				locator1 = "APIBuilder#BREADCRUMB_LINK");
+
+			APIBuilderUI.viewEndpoint(endpointTitle = "/testendpoint1/");
+		}
+	}
+
+	@priority = 5
+	test CanCreateEndpointWithSiteScope {
+		property portal.acceptance = "true";
+
+		task ("Given the API Application is created") {
+			APIBuilderUI.createAPIApplication(
+				addByPlus = "true",
+				title = "test2");
+		}
+
+		task ("And Given adding new endpoint with Site scope") {
+			APIBuilderUI.switchToRelatedEntryInEditApplication(
+				entity = "Endpoints",
+				title = "test2");
+
+			APIBuilderUI.createAPIEndpointInEditAPIApplicationPage(
+				path = "testendpoint2",
+				scopeName = "Site",
+				title = "test2");
+		}
+
+		task ("Then the endpoint with site scope is created successfully and listed") {
+			Alert.viewSuccessMessage();
+
+			APIBuilderUI.viewEndpointInfo(
+				linkName = "GET /testendpoint2",
+				method = "GET",
+				path = "testendpoint2",
+				scope = "Site",
+				tab = "Info");
+
+			Click(
+				key_linkName = "Endpoints",
+				locator1 = "APIBuilder#BREADCRUMB_LINK");
+
+			APIBuilderUI.viewEndpoint(endpointTitle = "/testendpoint2/");
+		}
+	}
+
+	@priority = 4
+	test PicklistScopeHasCorrectOptions {
+		property portal.acceptance = "true";
+
+		task ("Given the API Application is created") {
+			APIBuilderUI.createAPIApplication(
+				addByPlus = "true",
+				title = "test3");
+		}
+
+		task ("When adding new endpoint") {
+			APIBuilderUI.switchToRelatedEntryInEditApplication(
+				entity = "Endpoints",
+				title = "test3");
+
+			WaitForElementPresent(
+				key_title = "Edit API Application",
+				locator1 = "Header#H1_TITLE");
+
+			Click(locator1 = "Button#PLUS");
+
+			WaitForElementPresent(
+				key_title = "New API Endpoint",
+				locator1 = "Header#H1_TITLE");
+
+			Click(
+				key_dropDown = "Select Scope",
+				locator1 = "APIBuilder#ENDPOINT_DROPDOWN");
+		}
+
+		task ("Then scope option is present for both site and company") {
+			for (var scopeName : list "Site,Company") {
+				AssertElementPresent(
+					key_dropDownItem = ${scopeName},
+					locator1 = "APIBuilder#ENDPOINT_DROPDOWN_ITEM");
+			}
+		}
+	}
+
+}
