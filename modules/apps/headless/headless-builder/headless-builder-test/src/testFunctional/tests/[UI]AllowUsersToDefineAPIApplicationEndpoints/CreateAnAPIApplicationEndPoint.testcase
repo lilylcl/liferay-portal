@@ -25,6 +25,7 @@ definition {
 
 	@priority = 5
 	test CanCreateEndpointWithCompanyScope {
+		property portal.upstream = "lily";
 		property portal.acceptance = "true";
 
 		task ("Given the API Application is created") {
@@ -64,6 +65,7 @@ definition {
 
 	@priority = 5
 	test CanCreateEndpointWithSiteScope {
+		property portal.upstream = "lily";
 		property portal.acceptance = "true";
 
 		task ("Given the API Application is created") {
@@ -103,6 +105,7 @@ definition {
 
 	@priority = 4
 	test PicklistScopeHasCorrectOptions {
+		property portal.upstream = "lily";
 		property portal.acceptance = "true";
 
 		task ("Given the API Application is created") {
