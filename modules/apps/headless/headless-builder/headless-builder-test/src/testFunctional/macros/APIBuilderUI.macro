@@ -97,6 +97,29 @@ definition {
 			value1 = "Save");
 	}
 
+	macro createAPIEndpointInEditAPIApplicationPage {
+		WaitForElementPresent(
+			key_title = "Edit API Application",
+			locator1 = "Header#H1_TITLE");
+
+		AssertElementPresent(
+			key_title = ${title},
+			locator1 = "Header#H2_TITLE");
+
+		Click(locator1 = "Button#PLUS");
+
+		APIBuilderUI.selectEndPointScope(
+			dropDownItem = ${scopeName},
+			scopeSelected = "Select Scope");
+
+		Type(
+			key_fieldLabel = "Path",
+			locator1 = "TextInput#GENERIC_TEXT_INPUT",
+			value1 = ${path});
+
+		Click(locator1 = "APIBuilder#CREATE_BUTTON");
+	}
+
 	macro createAPISchema {
 		Variables.assertDefined(parameterList = "${name},${objectDefinitionName}");
 
@@ -233,6 +256,20 @@ definition {
 			value1 = "\RETURN");
 	}
 
+	macro selectEndPointScope {
+		WaitForElementPresent(
+			key_title = "New API Endpoint",
+			locator1 = "Header#H1_TITLE");
+
+		Click(
+			key_dropDown = ${scopeSelected},
+			locator1 = "APIBuilder#ENDPOINT_DROPDOWN");
+
+		Click(
+			key_dropDownItem = ${dropDownItem},
+			locator1 = "APIBuilder#ENDPOINT_DROPDOWN_ITEM");
+	}
+
 	macro setPanelCategoryKeyToObject {
 		Variables.assertDefined(parameterList = ${objectDefinition});
 
@@ -253,6 +290,35 @@ definition {
 		Click(
 			locator1 = "Button#BUTTON_WITH_VALUE",
 			value = ${entity});
+	}
+
+	macro viewEndpoint {
+		AssertElementPresent(
+			key_title = ${endpointTitle},
+			locator1 = "APIBuilder#ENDPOINT_TITLE");
+	}
+
+	macro viewEndpointInfo {
+		Click(
+			key_assetTitle = ${tab},
+			locator1 = "NavBar#ASSET_TITLE");
+
+		AssertElementPresent(
+			key_linkName = ${linkName},
+			locator1 = "APIBuilder#BREADCRUMB_LINK");
+
+		AssertElementPresent(
+			key_dropDown = ${method},
+			locator1 = "APIBuilder#ENDPOINT_DROPDOWN");
+
+		AssertElementPresent(
+			key_dropDown = ${scope},
+			locator1 = "APIBuilder#ENDPOINT_DROPDOWN");
+
+		AssertTextEquals(
+			key_fieldLabel = "Path",
+			locator1 = "TextInput#GENERIC_TEXT_INPUT",
+			value1 = ${path});
 	}
 
 	macro viewItemsInOrder {
